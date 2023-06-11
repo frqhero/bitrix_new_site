@@ -1,0 +1,42 @@
+volumes:
+  db:
+
+services:
+  php:
+    build: ./php
+    container_name: php
+    volumes:
+      - ./bitrix:/var/www/bitrix
+    ports:
+      - '9000:9000'
+    restart: always
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./bitrix:/var/www/bitrix
+    restart: always
+
+  db:
+    build: ./mysql
+    container_name: db
+    platform: linux/amd64
+    environment:
+      MYSQL_DATABASE: bitrix
+      MYSQL_USER: bitrix
+      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - .mysql/dump:/dump
+      - db:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    
